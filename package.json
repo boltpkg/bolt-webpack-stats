@@ -1,0 +1,27 @@
+{
+  "name": "bolt-webpack-stats",
+  "version": "0.0.0",
+  "description": "Get Webpack stats for all your Bolt workspaces",
+  "main": "index.js",
+  "repository": "https://github.com/boltpkg/bolt-webpack-stats",
+  "author": "Jamie Kyle <me@thejameskyle.com>",
+  "license": "MIT",
+  "scripts": {
+    "test": "ava"
+  },
+  "devDependencies": {
+    "ava": "^0.25.0",
+    "flow-bin": "^0.68.0"
+  },
+  "dependencies": {
+    "bolt": "^0.19.3",
+    "chalk": "^2.3.2",
+    "meow": "^4.0.0",
+    "p-limit": "^1.2.0",
+    "spawndamnit": "^1.0.0",
+    "tempy": "^0.2.1",
+    "util.promisify": "^1.0.0",
+    "webpack": "^4.1.1",
+    "webpack-cli": "^2.0.12"
+  }
+}
