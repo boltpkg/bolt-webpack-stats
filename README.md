@@ -14,21 +14,12 @@ yarn add --dev bolt-webpack-stats
 bolt-webpack-stats
 ```
 
-This will create a directory `./webpack-stats` relative to your `cwd` which has
-files like this:
+To write stats to a file, you can run:
 
 ```sh
-/webpack-stats/
-  package-name-1.json
-  package-name-2.json
-  package-name-3.json
-  /@maybe-npm-scope/
-    package-name-4.json
-    package-name-5.json
-    package-name-6.json
+bolt-webpack-stats -o stats.json
+bolt-webpack-stats > stats.json
 ```
-
-These will match up with all of your package names.
 
 You can also specify whatever Webpack flags you want to the `webpack` CLI by
 passing them in with `--`:
