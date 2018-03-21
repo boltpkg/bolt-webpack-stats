@@ -1,5 +1,6 @@
 // @flow
 'use strict';
+const webpackBundleSizeAnalyzer = require('webpack-bundle-size-analyzer');
 const spawndamnit = require('spawndamnit');
 const promisify = require('util.promisify');
 const pLimit = require('p-limit');
@@ -74,16 +75,24 @@ function boltWebpackStats(opts /*: Opts | void */) {
       let error = null;
 
       return ensureDir(outputDir).then(() => {
-        return Promise.all(results.map(res => {
+        return Promise.all(results.map((res, index) => {
           if (!res.error) {
-            return writeFile(path.resolve(outputDir, res.name + '.json'), res.stdout);
+            return writeFile(path.resolve(outputDir, res.name + '.json'), res.stdout).then(() => {
+              let bundleStats = JSON.parse(res.stdout.toString());
+              let depTrees = webpackBundleSizeAnalyzer.dependencySizeTree(bundleStats);
+
+              depTrees.forEach(tree => {
+                console.log(chalk.yellow.bold.underline(res.name));
+                webpackBundleSizeAnalyzer.printDependencySizeTree(tree, true);
+              });
+            });
           } else if (!error) {
             error = res.error;
           }
         }))
       }).then(() => {
         if (error) throw error;
-      });;
+      });
     });
   });
 }

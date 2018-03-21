@@ -22,10 +22,10 @@ let cli = meow({
       --continue-on-error        Continue running when there are errors in some workspaces
 
     Examples
-      Default to using ./webpack-stats directory:
+      Get Webpack stats for all your workspaces
       $ bolt-webpack-stats
 
-      Only build webpack bundles for workspaces in a sub directory: (unimplemented)
+      Only get Webpack stats for workspaces in a sub directory: (unimplemented)
       $ bolt-webpack-stats --only-fs ./ui/*
 
       Specify your own Webpack config file:
