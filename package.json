@@ -19,6 +19,7 @@
     "fs-vacuum": "^1.2.10",
     "meow": "^4.0.0",
     "p-limit": "^1.2.0",
+    "pretty-bytes": "^4.0.2",
     "spawndamnit": "^1.0.0",
     "tempy": "^0.2.1",
     "util.promisify": "^1.0.0",

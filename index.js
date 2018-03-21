@@ -1,12 +1,14 @@
 // @flow
 'use strict';
 const webpackBundleSizeAnalyzer = require('webpack-bundle-size-analyzer');
+const prettyBytes = require('pretty-bytes');
 const spawndamnit = require('spawndamnit');
 const promisify = require('util.promisify');
 const pLimit = require('p-limit');
 const mkdirp = require('mkdirp');
 const chalk = require('chalk');
 const tempy = require('tempy');
+const zlib = require('zlib');
 const path = require('path');
 const bolt = require('bolt');
 const os = require('os');
@@ -14,6 +16,8 @@ const fs = require('fs');
 
 const ensureDir = promisify(mkdirp);
 const writeFile = promisify(fs.writeFile);
+const readFile = promisify(fs.readFile);
+const gzip = promisify(zlib.gzip);
 
 const WEBPACK_BIN = require.resolve('webpack-cli/bin/webpack');
 
@@ -84,12 +88,18 @@ async function boltWebpackStats(opts /*: Opts | void */) {
         }
       }
 
+      let fileContents = await readFile(path.join(tempDir, pkg.name + '.js'));
+      let fileSize = Buffer.byteLength(fileContents);
+      let gzipSize = Buffer.byteLength(await gzip(fileContents, { level: 9 }));
+
       let bundleStatsJson = res.stdout.toString();
       let bundleStats = JSON.parse(bundleStatsJson);
       let depTrees = webpackBundleSizeAnalyzer.dependencySizeTree(bundleStats);
 
       stats.packages.push({
         pkgName: pkg.name,
+        fileSize,
+        gzipSize,
         bundleStats,
         depTrees,
       });
@@ -110,12 +120,14 @@ async function boltWebpackStats(opts /*: Opts | void */) {
 
   for (let pkg of stats.packages) {
     log();
-    log(chalk.yellow.underline(pkg.pkgName));
+    log(chalk.yellow.underline(`${pkg.pkgName} (size: ${prettyBytes(pkg.fileSize)}, gzip: ${prettyBytes(pkg.gzipSize)})`));
 
     for (let tree of pkg.depTrees) {
       webpackBundleSizeAnalyzer.printDependencySizeTree(tree, true, 0, log);
     }
   }
+
+  log();
 
   if (error) {
     throw error;
