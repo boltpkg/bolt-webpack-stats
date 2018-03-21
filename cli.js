@@ -14,10 +14,10 @@ let cli = meow({
       $ bolt-webpack-stats [path/to/output] <...flags> [-- <...webpack-cli-flags>]
 
     Flags
-      --only [name glob]         Filter workspaces by name (unimplemented)
-      --ignore [name glob]       Filter workspaces out by name (unimplemented)
-      --only-fs [file glob]      Filter workspaces by file path (unimplemented)
-      --ignore-fs [file glob]    Filter workspaces out by file path (unimplemented)
+      --only [name glob]         Filter workspaces by name
+      --ignore [name glob]       Filter workspaces out by name
+      --only-fs [file glob]      Filter workspaces by file path
+      --ignore-fs [file glob]    Filter workspaces out by file path
       --concurrency [number]     Number of Webpack processes to run at once (Default: # of CPUs)
       --continue-on-error        Continue running when there are errors in some workspaces
 
@@ -25,8 +25,8 @@ let cli = meow({
       Get Webpack stats for all your workspaces
       $ bolt-webpack-stats
 
-      Only get Webpack stats for workspaces in a sub directory: (unimplemented)
-      $ bolt-webpack-stats --only-fs ./ui/*
+      Only get Webpack stats for workspaces in a sub directory:
+      $ bolt-webpack-stats --only-fs "packages/frontend/**"
 
       Specify your own Webpack config file:
       $ bolt-webpack-stats -- --config $(pwd)/configs/webpack/production.config.js

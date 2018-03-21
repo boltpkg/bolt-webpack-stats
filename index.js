@@ -47,10 +47,14 @@ function boltWebpackStats(opts /*: Opts | void */) {
 
   let limit = pLimit(concurrency);
 
-  return bolt.getWorkspaces({ cwd }).then(packages => {
-    let filtered = packages; // TODO
-
-    return Promise.all(filtered.map(pkg => {
+  return bolt.getWorkspaces({
+    cwd,
+    only: opts.only,
+    ignore: opts.ignore,
+    onlyFs: opts.onlyFs,
+    ignoreFs: opts.ignoreFs,
+  }).then(packages => {
+    return Promise.all(packages.map(pkg => {
       let args = [...webpackArgs];
 
       args.push('--output-path', tempDir);
