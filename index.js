@@ -42,6 +42,7 @@ async function boltWebpackStats(opts /*: Opts | void */) {
   let concurrency = opts.concurrency || os.cpus().length;
   let continueOnError = opts.continueOnError || false;
   let json = typeof opts.json === 'undefined' ? true : opts.json;
+  let log = json ? console.error : console.log;
 
   if (!webpackArgs.length) {
     webpackArgs.push('--mode', 'production');
@@ -71,11 +72,11 @@ async function boltWebpackStats(opts /*: Opts | void */) {
       let res;
 
       try {
-        console.error(chalk.cyan(`Building ${pkg.name}...`));
+        log(chalk.cyan(`Building ${pkg.name}...`));
         res = await spawndamnit(WEBPACK_BIN, args, { cwd: pkg.dir });
       } catch (err) {
         if (continueOnError) {
-          console.error(chalk.red(`Errored in ${pkg.name}!`));
+          log(chalk.red(`Errored in ${pkg.name}!`));
           if (!error) error = err;
           return;
         } else {
@@ -86,11 +87,6 @@ async function boltWebpackStats(opts /*: Opts | void */) {
       let bundleStatsJson = res.stdout.toString();
       let bundleStats = JSON.parse(bundleStatsJson);
       let depTrees = webpackBundleSizeAnalyzer.dependencySizeTree(bundleStats);
-
-      depTrees.forEach(tree => {
-        console.error(chalk.yellow.bold.underline(pkg.name));
-        webpackBundleSizeAnalyzer.printDependencySizeTree(tree, true, 0, console.error);
-      });
 
       stats.packages.push({
         pkgName: pkg.name,
@@ -107,6 +103,18 @@ async function boltWebpackStats(opts /*: Opts | void */) {
   if (output) {
     await ensureDir(path.dirname(output));
     await writeFile(output, JSON.stringify(stats, null, 2));
+  }
+
+  log();
+  log(chalk.bgMagenta(' Package Stats: '));
+
+  for (let pkg of stats.packages) {
+    log();
+    log(chalk.yellow.underline(pkg.pkgName));
+
+    for (let tree of pkg.depTrees) {
+      webpackBundleSizeAnalyzer.printDependencySizeTree(tree, true, 0, log);
+    }
   }
 
   if (error) {
